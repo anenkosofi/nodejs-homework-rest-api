@@ -35,9 +35,7 @@ router.get('/:contactId', async (req, res, next) => {
     const { contactId } = req.params;
     const contact = await getContactById(contactId);
     if (!contact) {
-      const error = new Error(`Contact with id=${id} is not found`);
-      error.status = 404;
-      throw error;
+      return next();
     }
     res.json({
       status: 'success',
@@ -72,9 +70,7 @@ router.delete('/:contactId', async (req, res, next) => {
     const { contactId } = req.params;
     const removedContact = await removeContact(contactId);
     if (!removedContact) {
-      const error = new Error(`Contact with id=${id} is not found`);
-      error.status = 404;
-      throw error;
+      return next();
     }
     res.json({
       status: 'success',
@@ -96,12 +92,16 @@ router.put('/:contactId', async (req, res, next) => {
     }
     const { contactId } = req.params;
     const updatedContact = await updateContact(contactId, req.body);
+    if (!updatedContact) {
+      return next();
+    }
     res.json({
       status: 'success',
       code: 200,
       contact: updatedContact,
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
