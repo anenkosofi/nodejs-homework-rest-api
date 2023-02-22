@@ -6,6 +6,7 @@ const {
   validateStatusContact,
   validateContactId,
 } = require('../../middlewares/validation');
+const auth = require('../../middlewares/auth');
 const {
   addedContactJoiSchema,
   updatedContactJoiSchema,
@@ -16,7 +17,7 @@ const { contacts: controllers } = require('../../controllers');
 
 const router = express.Router();
 
-router.get('/', controllers.getAllContacts);
+router.get('/', auth, controllers.getAllContacts);
 
 router.get(
   '/:contactId',
@@ -26,6 +27,7 @@ router.get(
 
 router.post(
   '/',
+  auth,
   validateAddedContact(addedContactJoiSchema),
   controllers.addContact
 );
