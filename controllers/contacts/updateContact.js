@@ -3,8 +3,12 @@ const { Contact } = require('../../models');
 const updateContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
+    const { _id } = req.user;
     const updatedContact = await Contact.findByIdAndUpdate(
-      contactId,
+      {
+        owner: _id,
+        _id: contactId,
+      },
       req.body,
       { new: true }
     );
