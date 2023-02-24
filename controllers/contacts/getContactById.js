@@ -3,7 +3,8 @@ const { Contact } = require('../../models');
 const getContactById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await Contact.findById(contactId);
+    const { _id } = req.user;
+    const contact = await Contact.findById({ owner: _id, _id: contactId });
     if (!contact) {
       return next();
     }
