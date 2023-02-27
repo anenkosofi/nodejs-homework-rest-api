@@ -1,59 +1,38 @@
 const express = require('express');
 
-const {
-  validateAddedContact,
-  validateUpdatedContact,
-  validateStatusContact,
-  validateContactId,
-} = require('../../middlewares/validation');
-const auth = require('../../middlewares/auth');
-const {
-  addedContactJoiSchema,
-  updatedContactJoiSchema,
-  statusJoiSchema,
-  idContactSchema,
-} = require('../../models/contact');
 const { contacts: controllers } = require('../../controllers');
+const { auth, validateBody, isValidId } = require('../../middlewares');
+const { schemas } = require('../../models/contact');
 
 const router = express.Router();
 
 router.get('/', auth, controllers.getAllContacts);
 
-router.get(
-  '/:contactId',
-  auth,
-  validateContactId(idContactSchema),
-  controllers.getContactById
-);
+router.get('/:contactId', auth, isValidId, controllers.getContactById);
 
 router.post(
   '/',
   auth,
-  validateAddedContact(addedContactJoiSchema),
+  validateBody(schemas.addedContactJoiSchema),
   controllers.addContact
 );
 
 router.put(
   '/:contactId',
   auth,
-  validateContactId(idContactSchema),
-  validateUpdatedContact(updatedContactJoiSchema),
+  isValidId,
+  validateBody(schemas.updatedContactJoiSchema),
   controllers.updateContact
 );
 
 router.patch(
   '/:contactId/favorite',
   auth,
-  validateContactId(idContactSchema),
-  validateStatusContact(statusJoiSchema),
+  isValidId,
+  validateBody(schemas.statusJoiSchema),
   controllers.updateStatus
 );
 
-router.delete(
-  '/:contactId',
-  auth,
-  validateContactId(idContactSchema),
-  controllers.deleteContact
-);
+router.delete('/:contactId', auth, isValidId, controllers.deleteContact);
 
 module.exports = router;
