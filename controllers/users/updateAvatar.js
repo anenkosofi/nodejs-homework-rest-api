@@ -1,6 +1,7 @@
 const { User } = require('../../models');
 const path = require('path');
 const fs = require('fs/promises');
+const crypto = require('crypto');
 const Jimp = require('jimp');
 
 const avatarsDir = path.join(__dirname, '../../', 'public', 'avatars');
@@ -8,7 +9,8 @@ const avatarsDir = path.join(__dirname, '../../', 'public', 'avatars');
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempDir, originalname } = req.file;
-  const imageName = `${_id}_${originalname}`;
+  const uniqueNumber = crypto.randomUUID();
+  const imageName = `${_id}_${uniqueNumber}_${originalname}`;
   try {
     const image = await Jimp.read(tempDir);
     image.resize(250, 250);
