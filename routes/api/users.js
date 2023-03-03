@@ -1,18 +1,18 @@
 const express = require('express');
 
-const {
-  validateUser,
-  validateSubscription,
-} = require('../../middlewares/validation');
-const auth = require('../../middlewares/auth');
 const { users: controllers } = require('../../controllers');
-const { userJoiSchema, subscriptionJoiSchema } = require('../../models/user');
+const { auth, validateBody, uploadFile } = require('../../middlewares');
+const { schemas } = require('../../models/user');
 
 const router = express.Router();
 
-router.post('/register', validateUser(userJoiSchema), controllers.register);
+router.post(
+  '/register',
+  validateBody(schemas.userJoiSchema),
+  controllers.register
+);
 
-router.post('/login', validateUser(userJoiSchema), controllers.login);
+router.post('/login', validateBody(schemas.userJoiSchema), controllers.login);
 
 router.get('/current', auth, controllers.getCurrentUser);
 
@@ -21,8 +21,15 @@ router.post('/logout', auth, controllers.logout);
 router.patch(
   '/',
   auth,
-  validateSubscription(subscriptionJoiSchema),
+  validateBody(schemas.subscriptionJoiSchema),
   controllers.updateSubscription
+);
+
+router.patch(
+  '/avatars',
+  auth,
+  uploadFile.single('avatar'),
+  controllers.updateAvatar
 );
 
 module.exports = router;
